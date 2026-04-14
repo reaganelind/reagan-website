@@ -11,7 +11,7 @@ let cycleTimer;
 let breathTimer;
 
 /* ---------- AMBIENT AUDIO ---------- */
-const ambient = new Audio("assets/audio/ambient.mp3");
+const ambient = new Audio("/reagan-website/ambient.mp3"); // ✅ FIXED PATH
 ambient.loop = true;
 ambient.volume = 0.25;
 
@@ -118,11 +118,10 @@ function stopExercise() {
   ambient.pause();
   ambient.currentTime = 0;
 
-  // SAME FLOW AS EARLY STOP NOW
   askHeartRate();
 }
 
-/* ---------- STOP EARLY (UPDATED TO MATCH COMPLETION FLOW) ---------- */
+/* ---------- STOP EARLY ---------- */
 function stopExerciseEarly() {
   stopExistingIntervals();
 
@@ -133,7 +132,6 @@ function stopExerciseEarly() {
 
   overlay.textContent = "Stopped";
 
-  // IMPORTANT: still continue full post-flow
   askHeartRate();
 }
 

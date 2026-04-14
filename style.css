@@ -1,0 +1,140 @@
+body {
+  text-align: center;
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 20px;
+  background: linear-gradient(135deg, #e8f3f5, #f6f7fb);
+  color: #1f2a33;
+}
+
+/* LINKS */
+a {
+  display: inline-block;
+  margin: 10px;
+  font-size: 18px;
+  color: #2b6cb0;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* BUTTONS */
+button {
+  padding: 10px 16px;
+  border: none;
+  border-radius: 10px;
+  background: #2b6cb0;
+  color: white;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+/* BREATHING BOX */
+.square {
+  width: 220px;
+  height: 220px;
+  border: 2px solid rgba(0,0,0,0.2);
+  margin: 50px auto;
+  position: relative;
+  border-radius: 14px;
+  background: rgba(255,255,255,0.85);
+  backdrop-filter: blur(6px);
+  overflow: hidden;
+}
+
+/* DOT */
+.dot {
+  width: 14px;
+  height: 14px;
+  background: #2b6cb0;
+  border-radius: 50%;
+  position: absolute;
+}
+
+/* TEXT (CENTERED - NEVER OVERRIDDEN BY JS) */
+#overlayText {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  font-size: 30px;
+  font-weight: bold;
+  color: #2b6cb0;
+
+  pointer-events: none;
+  text-align: center;
+
+  transition: all 0.2s ease;
+  opacity: 0.9;
+}
+
+/* EXHALE EMPHASIS */
+#overlayText.exhale {
+  color: #1a4f8b;
+  font-size: 34px;
+  opacity: 1;
+}
+
+/* ANIMATION */
+@keyframes moveSquare {
+  0% { top: 0; left: 0; }
+  25% { top: 0; left: calc(100% - 14px); }
+  50% { top: calc(100% - 14px); left: calc(100% - 14px); }
+  75% { top: calc(100% - 14px); left: 0; }
+  100% { top: 0; left: 0; }
+}
+
+.animate {
+  animation: moveSquare 16s linear infinite;
+}
+
+/* JOURNAL */
+#entriesList {
+  margin-top: 20px;
+}
+
+.entryCard {
+  background: white;
+  margin: 15px auto;
+  padding: 15px;
+  max-width: 650px;
+  border-radius: 14px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  cursor: pointer;
+  transition: 0.15s ease;
+  text-align: left;
+}
+
+.entryCard:hover {
+  transform: scale(1.01);
+  box-shadow: 0 4px 18px rgba(0,0,0,0.12);
+}
+
+.entryHeader {
+  font-weight: bold;
+  color: #2b6cb0;
+  margin-bottom: 10px;
+}
+
+.entryBody {
+  font-size: 15px;
+  line-height: 1.5;
+  color: #333;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+}
+
+li {
+  background: white;
+  margin: 10px auto;
+  padding: 10px;
+  max-width: 600px;
+  border-radius: 10px;
+}

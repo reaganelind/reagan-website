@@ -1,0 +1,177 @@
+const dot = document.getElementById("dot");
+const overlay = document.getElementById("overlayText");
+const progress = document.getElementById("progress");
+const startBtn = document.getElementById("startBtn");
+const stopBtn = document.getElementById("stopBtn");
+
+let repetitions = 0;
+const maxReps = 5;
+
+let cycleTimer;
+let breathTimer;
+
+/* ---------- AMBIENT AUDIO ---------- */
+const ambient = new Audio("assets/audio/ambient.mp3");
+ambient.loop = true;
+ambient.volume = 0.25;
+
+/* ---------- EVENT LISTENERS ---------- */
+startBtn.addEventListener("click", async () => {
+  try {
+    await document.documentElement.requestFullscreen();
+  } catch (e) {
+    console.log("Fullscreen not supported or blocked");
+  }
+
+  startBtn.style.display = "none";
+  countdownStart();
+});
+
+stopBtn.addEventListener("click", stopExerciseEarly);
+
+/* ---------- COUNTDOWN ---------- */
+function countdownStart() {
+  let count = 3;
+  overlay.textContent = count;
+
+  const interval = setInterval(() => {
+    count--;
+
+    if (count > 0) {
+      overlay.textContent = count;
+    } else if (count === 0) {
+      overlay.textContent = "Begin";
+    } else {
+      clearInterval(interval);
+      ambient.play();
+      startAnimation();
+    }
+  }, 1000);
+}
+
+/* ---------- START SESSION ---------- */
+function startAnimation() {
+  stopExistingIntervals();
+
+  repetitions = 0;
+  updateProgress();
+  resetAnimation();
+
+  dot.classList.add("animate");
+
+  startCycleCounter();
+  startBreathingGuide();
+}
+
+/* ---------- RESET DOT ---------- */
+function resetAnimation() {
+  dot.classList.remove("animate");
+  void dot.offsetWidth;
+}
+
+/* ---------- CYCLE COUNTER ---------- */
+function startCycleCounter() {
+  cycleTimer = setInterval(() => {
+    repetitions++;
+    updateProgress();
+
+    if (repetitions >= maxReps) {
+      stopExercise(); // normal completion
+    }
+  }, 16000);
+}
+
+/* ---------- BREATHING GUIDE ---------- */
+function startBreathingGuide() {
+  const steps = ["Inhale", "Hold", "Exhale", "Hold"];
+  let i = 0;
+
+  function render(step) {
+    overlay.textContent = step;
+
+    if (step === "Exhale") {
+      overlay.classList.add("exhale");
+    } else {
+      overlay.classList.remove("exhale");
+    }
+  }
+
+  render(steps[i]);
+
+  breathTimer = setInterval(() => {
+    i = (i + 1) % steps.length;
+    render(steps[i]);
+  }, 4000);
+}
+
+/* ---------- PROGRESS ---------- */
+function updateProgress() {
+  progress.textContent = `${repetitions} / ${maxReps} cycles`;
+}
+
+/* ---------- STOP (NORMAL COMPLETION) ---------- */
+function stopExercise() {
+  stopExistingIntervals();
+
+  dot.classList.remove("animate");
+
+  ambient.pause();
+  ambient.currentTime = 0;
+
+  // SAME FLOW AS EARLY STOP NOW
+  askHeartRate();
+}
+
+/* ---------- STOP EARLY (UPDATED TO MATCH COMPLETION FLOW) ---------- */
+function stopExerciseEarly() {
+  stopExistingIntervals();
+
+  dot.classList.remove("animate");
+
+  ambient.pause();
+  ambient.currentTime = 0;
+
+  overlay.textContent = "Stopped";
+
+  // IMPORTANT: still continue full post-flow
+  askHeartRate();
+}
+
+/* ---------- CLEANUP ---------- */
+function stopExistingIntervals() {
+  if (cycleTimer) clearInterval(cycleTimer);
+  if (breathTimer) clearInterval(breathTimer);
+}
+
+/* ---------- HEART RATE LOGIC ---------- */
+function askHeartRate() {
+  alert(
+    "Congratulations on completing the breathing exercise!\n\n" +
+    "The box breathing you just completed helps calm your body by slowing your breathing and activating the vagus nerve. " +
+    "This lowers heart rate, reduces stress signals, and shifts you out of the Sympathetic Nervous System into a more relaxed state."
+  );
+
+  let hr = prompt("Enter your current heart rate (BPM):");
+
+  if (hr === null) return;
+
+  hr = parseInt(hr);
+
+  if (isNaN(hr)) {
+    alert("Please enter a valid number.");
+    return askHeartRate();
+  }
+
+  if (hr > 80) {
+    const repeat = confirm("Your heartrate is still elevated, indicating an acute stress response.  Press OK to repeat exercise.  Press Cancel for alternative stress reduction.");
+
+    if (repeat) {
+      startAnimation();
+    } else {
+      alert("Your heartrate is still elevated, indicating an acute stress response.  Engaging in Physical Activity (e.g. a short walk) can reduce this response.  Press OK when finished.");
+      window.location.href = "journal_intro_2.html";
+    }
+  } else {
+    window.location.href = "journal_intro.html";
+  }
+}

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Entries</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<h2>Entries</h2>
+
+<div id="entriesList"></div>
+
+<br>
+<a href="home.html">Return to Homepage</a>
+
+<script>
+function loadEntries() {
+  const container = document.getElementById("entriesList");
+  container.innerHTML = "";
+
+  let entries = JSON.parse(localStorage.getItem("journalEntries")) || [];
+
+  // 🧠 FILTER OUT INCOMPLETE ENTRIES
+  entries = entries.filter(entry => {
+    return (
+      entry &&
+      entry.date &&
+      Array.isArray(entry.answers) &&
+      entry.answers.length === 3 &&
+      entry.answers[0]?.trim() &&
+      entry.answers[1]?.trim() &&
+      entry.answers[2]?.trim()
+    );
+  });
+
+  if (entries.length === 0) {
+    container.innerHTML = "<p>No completed entries yet.</p>";
+    return;
+  }
+
+  entries.forEach((entry, index) => {
+    const div = document.createElement("div");
+    div.className = "entryCard";
+
+    const date = entry.date;
+
+    const before = entry.answers[0];
+    const now = entry.answers[1];
+    const future = entry.answers[2];
+
+    div.innerHTML = `
+      <div class="entryHeader">
+        📅 ${date}
+      </div>
+
+      <div class="entryBody" id="body-${index}" style="display:none;">
+        <p><b>Before elevated heart rate:</b><br>${before}</p>
+        <p><b>How you feel now:</b><br>${now}</p>
+        <p><b>What you will do differently:</b><br>${future}</p>
+      </div>
+    `;
+
+    div.onclick = () => {
+      const body = document.getElementById(`body-${index}`);
+      body.style.display = body.style.display === "none" ? "block" : "none";
+    };
+
+    container.appendChild(div);
+  });
+}
+
+loadEntries();
+</script>
+
+</body>
+</html>

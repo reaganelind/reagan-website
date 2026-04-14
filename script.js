@@ -11,7 +11,7 @@ let cycleTimer;
 let breathTimer;
 
 /* ---------- AMBIENT AUDIO ---------- */
-const ambient = new Audio("/reagan-website/ambient.mp3"); // ✅ FIXED PATH
+const ambient = new Audio("/reagan-website/ambient.mp3"); // correct for GitHub Pages
 ambient.loop = true;
 ambient.volume = 0.25;
 
@@ -22,6 +22,9 @@ startBtn.addEventListener("click", async () => {
   } catch (e) {
     console.log("Fullscreen not supported or blocked");
   }
+
+  // ✅ FIX: play audio directly on user interaction
+  ambient.play().catch(err => console.log("Audio blocked:", err));
 
   startBtn.style.display = "none";
   countdownStart();
@@ -43,8 +46,7 @@ function countdownStart() {
       overlay.textContent = "Begin";
     } else {
       clearInterval(interval);
-      ambient.play();
-      startAnimation();
+      startAnimation(); // ❌ removed ambient.play() from here
     }
   }, 1000);
 }
@@ -76,7 +78,7 @@ function startCycleCounter() {
     updateProgress();
 
     if (repetitions >= maxReps) {
-      stopExercise(); // normal completion
+      stopExercise();
     }
   }, 16000);
 }
@@ -109,10 +111,9 @@ function updateProgress() {
   progress.textContent = `${repetitions} / ${maxReps} cycles`;
 }
 
-/* ---------- STOP (NORMAL COMPLETION) ---------- */
+/* ---------- STOP ---------- */
 function stopExercise() {
   stopExistingIntervals();
-
   dot.classList.remove("animate");
 
   ambient.pause();
@@ -121,10 +122,8 @@ function stopExercise() {
   askHeartRate();
 }
 
-/* ---------- STOP EARLY ---------- */
 function stopExerciseEarly() {
   stopExistingIntervals();
-
   dot.classList.remove("animate");
 
   ambient.pause();
@@ -161,12 +160,12 @@ function askHeartRate() {
   }
 
   if (hr > 80) {
-    const repeat = confirm("Your heartrate is still elevated, indicating an acute stress response.  Press OK to repeat exercise.  Press Cancel for alternative stress reduction.");
+    const repeat = confirm("Your heartrate is still elevated, indicating an acute stress response. Press OK to repeat exercise. Press Cancel for alternative stress reduction.");
 
     if (repeat) {
       startAnimation();
     } else {
-      alert("Your heartrate is still elevated, indicating an acute stress response.  Engaging in Physical Activity (e.g. a short walk) can reduce this response.  Press OK when finished.");
+      alert("Your heartrate is still elevated. A short walk or physical activity can help reduce this response.");
       window.location.href = "journal_intro_2.html";
     }
   } else {
